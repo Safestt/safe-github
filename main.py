@@ -18,8 +18,7 @@ async def websocket_connection(websocket: WebSocket):
         while True:
             data = await websocket.receive_text() 
             for connection in active_connections:
-                if connection != websocket:  # No reenviar el mensaje al mismo cliente que lo envió
-                    await connection.send_text(f"Anonimo  {data}")
+                await connection.send_text(f"Anonimo: {data}")  # Enviar a todos, incluido el remitente
     except:
         print("❌ Cliente desconectado")
     finally:
