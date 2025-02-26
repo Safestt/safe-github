@@ -2,38 +2,114 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat WebSockets</title>
+    <title>Cliente WebSocket</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        #chat { width: 80%; margin: 0 auto; height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; }
-        #message { width: 70%; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-box {
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .message {
+            padding: 8px 12px;
+            margin: 5px;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+        .user {
+            background: #007bff;
+            color: white;
+            align-self: flex-end;
+        }
+        .other {
+            background: #e5e5ea;
+            color: black;
+            align-self: flex-start;
+        }
+        .input-box {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            background: #fff;
+        }
+        .input-box input {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 20px;
+            outline: none;
+        }
+        .input-box button {
+            margin-left: 10px;
+            padding: 8px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <h2>💬 Chat WebSockets</h2>
-    <input type="text" id="username" placeholder="Tu nombre">
-    <div id="chat"></div>
-    <input type="text" id="message" placeholder="Escribe un mensaje">
-    <button onclick="sendMessage()">Enviar</button>
-
+    <div class="chat-container">
+        <div class="chat-box" id="messages"></div>
+        <div class="input-box">
+            <input id="message" type="text" placeholder="Escribe un mensaje...">
+            <button onclick="sendMessage()">Enviar</button>
+        </div>
+    </div>
     <script>
-        const ws = new WebSocket("wss://tu-api.com/ws");  // Reemplaza con tu WebSocket real
-        const chatBox = document.getElementById("chat");
+        const ws = new WebSocket("ws://127.0.0.1:8000/ws");
+
+        ws.onopen = () => console.log("✅ Conectado al servidor WebSocket");
 
         ws.onmessage = (event) => {
-            const msg = document.createElement("p");
-            msg.innerText = event.data;
-            chatBox.appendChild(msg);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            const div = document.createElement("div");
+            div.textContent = event.data;
+            div.classList.add("message", "other");
+            document.getElementById("messages").appendChild(div);
+            document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
         };
 
+        ws.onerror = (error) => console.error("❌ Error en WebSocket:", error);
+
+        ws.onclose = () => console.log("🔴 Conexión cerrada");
+
         function sendMessage() {
-            const username = document.getElementById("username").value || "Anónimo";
-            const message = document.getElementById("message").value;
-            if (message) {
-                ws.send(`${username}: ${message}`);
-                document.getElementById("message").value = "";
+            const input = document.getElementById("message");
+            const messageText = input.value.trim();
+
+            if (messageText !== "") {
+                // Mostrar el mensaje en el chat antes de enviarlo
+                const div = document.createElement("div");
+                div.textContent = messageText;
+                div.classList.add("message", "user");
+                document.getElementById("messages").appendChild(div);
+                document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
+                
+                // Enviar el mensaje al WebSocket
+                ws.send(messageText);
+                input.value = "";
             }
         }
     </script>
