@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat WebSockets</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #chat { width: 80%; margin: 0 auto; height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; }
+        #message { width: 70%; }
+    </style>
+</head>
+<body>
+    <h2>💬 Chat WebSockets</h2>
+    <input type="text" id="username" placeholder="Tu nombre">
+    <div id="chat"></div>
+    <input type="text" id="message" placeholder="Escribe un mensaje">
+    <button onclick="sendMessage()">Enviar</button>
+
+    <script>
+        const ws = new WebSocket("wss://tu-api.com/ws");  // Reemplaza con tu WebSocket real
+        const chatBox = document.getElementById("chat");
+
+        ws.onmessage = (event) => {
+            const msg = document.createElement("p");
+            msg.innerText = event.data;
+            chatBox.appendChild(msg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        };
+
+        function sendMessage() {
+            const username = document.getElementById("username").value || "Anónimo";
+            const message = document.getElementById("message").value;
+            if (message) {
+                ws.send(`${username}: ${message}`);
+                document.getElementById("message").value = "";
+            }
+        }
+    </script>
+</body>
+</html>
