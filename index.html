@@ -80,10 +80,16 @@
     </div>
     <script>
         const ws = new WebSocket("wss://safe-github-io.onrender.com/ws");
+        let lastSentMessage = "";  // Variable para almacenar el último mensaje enviado
 
         ws.onopen = () => console.log("✅ Conectado al servidor WebSocket");
 
         ws.onmessage = (event) => {
+            if (event.data === lastSentMessage) {
+                lastSentMessage = ""; // Resetear para evitar problemas en futuros mensajes
+                return;  // No mostrar el mensaje repetido
+            }
+
             const div = document.createElement("div");
             div.textContent = event.data;
             div.classList.add("message", "other");
@@ -100,6 +106,8 @@
             const messageText = input.value.trim();
 
             if (messageText !== "") {
+                lastSentMessage = "Anonimo  " + messageText;  // Guardamos el mensaje enviado
+
                 // Mostrar el mensaje en el chat antes de enviarlo
                 const div = document.createElement("div");
                 div.textContent = messageText;
