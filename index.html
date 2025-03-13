@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prueba de Notificaciones Push</title>
+    <title>Prueba de Notificaciones </title>
     <!-- Script de OneSignal -->
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(function(OneSignal) {
-        // Inicialización de OneSignal
-        OneSignal.init({
-          appId: "be09d4a0-f329-4bfd-9b7f-d42032523c2c",  // Tu App ID de OneSignal
-          allowLocalhostAsSecureOrigin: true,  // Permite localhost como origen seguro
-        });
-      });
-    </script>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "6a5dffbc-fdc3-4c49-b84c-8353497d5209",
+    });
+  });
+</script>
 </head>
 <body>
     <h1>Prueba de Notificaciones Push con OneSignal</h1>
